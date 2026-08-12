@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { z } from 'zod';
+// import { z } from 'zod';
+import { object, string, number, type InferOutput, parse } from 'valibot';
 import type { SearchType } from '../types';
 
 // TYPE GUARD OR ASSERTION
@@ -15,16 +16,28 @@ import type { SearchType } from '../types';
 // }
 
 // Zod
-const Weather = z.object({
-  name: z.string(),
-  main: z.object({
-    temp: z.number(),
-    temp_max: z.number(),
-    temp_min: z.number(),
+// const Weather = z.object({
+//   name: z.string(),
+//   main: z.object({
+//     temp: z.number(),
+//     temp_max: z.number(),
+//     temp_min: z.number(),
+//   }),
+// });
+
+// type Weather = z.infer<typeof Weather>
+
+// Valibot
+const WeatherSchema = object({
+  name: string(),
+  main: object({
+    temp: number(),
+    temp_max: number(),
+    temp_min: number(),
   }),
 });
 
-type Weather = z.infer<typeof Weather>
+type WeatherSchema = InferOutput<typeof WeatherSchema>;
 
 export default function useWeather() {
   const fetchWeather = async (search: SearchType) => {
@@ -53,15 +66,19 @@ export default function useWeather() {
       // }
 
       // Zod
-      const { data: weatherResult } = await axios(weatherUrl);
-      const result = Weather.safeParse(weatherResult)
-      if (result.success) {
-        console.log(result.data.name)
-        console.log(result.data.main.temp)
-      } else {
-        console.log('Respuesta mal formada')
-      }
+      // const { data: weatherResult } = await axios(weatherUrl);
+      // const result = Weather.safeParse(weatherResult)
+      // if (result.success) {
+      //   console.log(result.data.name)
+      //   console.log(result.data.main.temp)
+      // }
 
+      // Valibot
+      const { data: weatherResult } = await axios(weatherUrl);
+      const result = parse(WeatherSchema, weatherResult);
+      if (result) {
+        console.log(result.name);
+      }
     } catch (error) {
       console.log(error);
     }
