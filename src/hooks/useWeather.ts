@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import axios from 'axios';
 import { z } from 'zod';
 // import { object, string, number, type InferOutput, parse } from 'valibot';
@@ -79,7 +79,7 @@ export default function useWeather() {
       const { data: weatherResult } = await axios(weatherUrl);
       const result = Weather.safeParse(weatherResult);
       if (result.success) {
-        setWeather(result.data)
+        setWeather(result.data);
       }
 
       // Valibot
@@ -93,8 +93,11 @@ export default function useWeather() {
     }
   };
 
+  const hasWeatherData = useMemo(() => weather.name, [weather]);
+
   return {
     weather,
     fetchWeather,
+    hasWeatherData,
   };
 }
