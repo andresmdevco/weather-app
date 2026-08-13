@@ -68,7 +68,6 @@ export default function useWeather() {
         setNotFound(true);
         return;
       }
-      console.log(data[0]);
 
       const lat = data[0].lat;
       const lon = data[0].lon;
